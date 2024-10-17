@@ -1,7 +1,6 @@
-= 1.2 =
+= 1.2.3 =
 Fecha de lanzamiento: 17 de Octubre de 2024
 
-* [Add] Creación de shortcode [btn-group]
 * [Add] Creación de shortcode [alert]
 
 

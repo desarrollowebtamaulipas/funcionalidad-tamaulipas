@@ -4,7 +4,7 @@ Plugin Name: Gobierno de Tamaulipas | Funcionalidad Tamaulipas
 Plugin URI: http://www.tamaulipas.gob.mx
 Description: Catalogo de shortcodes de Bootstrap 5 y funcionalidades para themes del Gobierno de Tamaulipas
 Author: Departamento de Diseño de Interfaces Gráficas
-Version: 1.2.2
+Version: 1.2.3
 */
 
 
@@ -259,3 +259,23 @@ function pdfjs_custom_viewer_shortcode($atts) {
 
 }
 add_shortcode('pdf', 'pdfjs_custom_viewer_shortcode');
+
+
+// Alertas
+function bootstrap_alert_shortcode($atts, $content = null) {
+	// Atributos del Shortcode
+	$atts = shortcode_atts(
+		array(
+			'type' => 'primary',
+			'xclass' => '' // Clases adicionales
+		),
+		$atts,
+		'alert'
+	);
+
+	// Generamos el HTML del botón con el contenido
+	$output = '<div class="alert alert-' . esc_attr($atts['type']) . ' ' . esc_attr($atts['xclass']) . '" role="alert">' . do_shortcode($content) . '</div>';
+
+	return $output;
+}
+add_shortcode('alert', 'bootstrap_alert_shortcode');
