@@ -4,7 +4,7 @@ Plugin Name: Gobierno de Tamaulipas | Funcionalidad Tamaulipas
 Plugin URI: http://www.tamaulipas.gob.mx
 Description: Catalogo de shortcodes de Bootstrap 5 y funcionalidades para themes del Gobierno de Tamaulipas
 Author: Departamento de Diseño de Interfaces Gráficas
-Version: 1.3.1
+Version: 1.3.2
 */
 
 
@@ -300,16 +300,29 @@ function bootstrap_alert_shortcode($atts, $content = null) {
 	// Atributos del Shortcode
 	$atts = shortcode_atts(
 		array(
-			'type' => 'primary',
+			'type' => 'primary', // Tipo de alerta: primary, success, danger, etc.
+			'dismissible' => 'false', // Si la alerta es descartable
 			'xclass' => '' // Clases adicionales
 		),
 		$atts,
 		'alert'
 	);
 
-	// Generamos el HTML del botón con el contenido
-	$output = '<div class="alert alert-' . esc_attr($atts['type']) . ' ' . esc_attr($atts['xclass']) . '" role="alert">' . do_shortcode($content) . '</div>';
+	// Añadir la clase para las alertas descartables
+	$dismissible_class = '';
+	$dismiss_button = '';
+	if ($atts['dismissible'] === 'true' || $atts['dismissible'] === '1') {
+		$dismissible_class = ' alert-dismissible fade show';
+		$dismiss_button = '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>';
+	}
+
+	// Generar el HTML de la alerta
+	$output = '<div class="alert alert-' . esc_attr($atts['type']) . $dismissible_class . ' ' . esc_attr($atts['xclass']) . '" role="alert">';
+	$output .= do_shortcode($content); // Añadir el contenido de la alerta
+	$output .= $dismiss_button; // Añadir el botón de cerrar si es descartable
+	$output .= '</div>';
 
 	return $output;
 }
+
 add_shortcode('alert', 'bootstrap_alert_shortcode');

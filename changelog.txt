@@ -1,8 +1,9 @@
-= 1.3.1 =
+= 1.3.2 =
 Fecha de lanzamiento: 18 de Octubre de 2024
 
 * [Add] Creación de shortcode [button-group]
 * [Improve] Removió el filtro wpautop al shortcode [button]
+* [Improve] Agregó la opción de dismissible al shortcode [alert]
 
 
 = 1.2.3 =
@@ -14,7 +15,7 @@ Fecha de lanzamiento: 17 de Octubre de 2024
 = 1.1 =
 Fecha de lanzamiento: 2 de Septiembre de 2024
 
-* [Add] Creación de shortcode [pdf] con el video de Google PDF Viewer
+* [Add] Creación de shortcode [pdf] con el visor de Google PDF Viewer
 
 
 = 1.0 =
