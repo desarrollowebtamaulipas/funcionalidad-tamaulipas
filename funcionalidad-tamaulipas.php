@@ -4,7 +4,7 @@ Plugin Name: Gobierno de Tamaulipas | Funcionalidad Tamaulipas
 Plugin URI: http://www.tamaulipas.gob.mx
 Description: Catalogo de shortcodes de Bootstrap 5 y funcionalidades para themes del Gobierno de Tamaulipas
 Author: Departamento de Diseño de Interfaces Gráficas
-Version: 1.2.3
+Version: 1.3
 */
 
 
@@ -110,7 +110,39 @@ function bootstrap_button_shortcode($atts, $content = null) {
 
 	return $output;
 }
+remove_filter('the_content', 'wpautop');
 add_shortcode('button', 'bootstrap_button_shortcode');
+
+
+
+// Grupo de botones
+function bootstrap_button_group_shortcode($atts, $content = null) {
+	// Atributos del Shortcode
+	$atts = shortcode_atts(
+		array(
+			'vertical' => false,
+			'size'	=>	'md',
+			'xclass' => 'mb-4' // Clases adicionales
+		),
+		$atts,
+		'button-group'
+	);
+	
+	// Definir la clase de grupo de botones
+	$btn_group = 'btn-group';
+	
+	// Si el atributo vertical es "true" o "1", añade la clase btn-group-vertical
+	if ($atts['vertical'] === 'true' || $atts['vertical'] === '1') {
+		$btn_group = ' btn-group-vertical';
+	}
+	
+	// Generamos el HTML del grupo de botones con el contenido
+	$output = '<div class="' . $btn_group . ' btn-group-' . esc_attr($atts['size']) . ' ' . esc_attr($atts['xclass']) . '" role="group">' . do_shortcode($content) . '</div>';
+	
+	return $output;
+}
+
+add_shortcode('button-group', 'bootstrap_button_group_shortcode');
 
 
 
