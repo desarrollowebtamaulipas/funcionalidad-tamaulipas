@@ -137,7 +137,9 @@ function bootstrap_button_group_shortcode($atts, $content = null) {
 	}
 	
 	// Generamos el HTML del grupo de botones con el contenido
-	$output = '<div class="' . $btn_group . ' btn-group-' . esc_attr($atts['size']) . ' ' . esc_attr($atts['xclass']) . '" role="group">' . do_shortcode($content) . '</div>';
+	$output = '<div class="clearfix ' . esc_attr($atts['xclass']) . '">
+		<div class="' . $btn_group . ' btn-group-' . esc_attr($atts['size']) . '" role="group">' . do_shortcode($content) . '</div>
+	</div>';
 	
 	return $output;
 }
