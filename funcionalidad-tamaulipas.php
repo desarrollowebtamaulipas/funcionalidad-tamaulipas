@@ -4,7 +4,7 @@ Plugin Name: Gobierno de Tamaulipas | Funcionalidad Tamaulipas
 Plugin URI: http://www.tamaulipas.gob.mx
 Description: Catalogo de shortcodes de Bootstrap 5 y funcionalidades para themes del Gobierno de Tamaulipas
 Author: Departamento de Diseño de Interfaces Gráficas
-Version: 1.3.2
+Version: 1.3.3
 */
 
 
@@ -107,10 +107,10 @@ function bootstrap_button_shortcode($atts, $content = null) {
 
 	// Generamos el HTML del botón con el contenido
 	$output = '<a href="' . esc_url($atts['link']) . '" class="btn btn-' . esc_attr($atts['type']) . ' ' . $size_class . ' ' . esc_attr($atts['xclass']) . '"' . $data_attr . $target_attr . '>' . do_shortcode($content) . '</a>';
-
+	
 	return $output;
 }
-remove_filter('the_content', 'wpautop');
+
 add_shortcode('button', 'bootstrap_button_shortcode');
 
 
@@ -136,10 +136,10 @@ function bootstrap_button_group_shortcode($atts, $content = null) {
 		$btn_group = ' btn-group-vertical';
 	}
 	
-	// Generamos el HTML del grupo de botones con el contenido
-	$output = '<div class="clearfix ' . esc_attr($atts['xclass']) . '">
-		<div class="' . $btn_group . ' btn-group-' . esc_attr($atts['size']) . '" role="group">' . do_shortcode($content) . '</div>
-	</div>';
+	// Generamos el HTML del grupo de botones
+	$output = '<div class="clearfix ' . esc_attr($atts['xclass']) . '"><div class="' . esc_attr($btn_group) . ' btn-group-' . esc_attr($atts['size']) . '" role="group">';
+	$output .= do_shortcode(shortcode_unautop($content));
+	$output .= '</div></div>';
 	
 	return $output;
 }

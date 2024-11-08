@@ -1,3 +1,8 @@
+= 1.3.3 =
+Fecha de lanzamiento: 8 de Noviembre de 2024
+
+* [Fix] Arreglo en el shortcode de Button Group que agregaba un remove_filter que no iba
+
 = 1.3.2 =
 Fecha de lanzamiento: 18 de Octubre de 2024
 
