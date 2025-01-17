@@ -4,8 +4,86 @@ Plugin Name: Gobierno de Tamaulipas | Funcionalidad Tamaulipas
 Plugin URI: http://www.tamaulipas.gob.mx
 Description: Catalogo de shortcodes de Bootstrap 5 y funcionalidades para themes del Gobierno de Tamaulipas
 Author: Departamento de Diseño de Interfaces Gráficas
-Version: 1.3.3.1
+Version: 1.3.3.2
 */
+
+
+class FuncionalidadTamaulipasUpdater {
+	private $plugin_slug = 'funcionalidad-tamaulipas';
+	private $update_url = 'https://raw.githubusercontent.com/desarrollowebtamaulipas/funcionalidad-tamaulipas/main/update.json';
+
+	public function __construct() {
+		add_filter('plugins_api', [$this, 'plugin_info'], 20, 3);
+		add_filter('site_transient_update_plugins', [$this, 'check_for_updates']);
+		add_action('upgrader_process_complete', [$this, 'clear_cache'], 10, 2);
+	}
+
+	public function plugin_info($res, $action, $args) {
+		if ($action !== 'plugin_information' || $args->slug !== $this->plugin_slug) {
+			return $res;
+		}
+
+		$remote = $this->get_remote_info();
+		if (!$remote) {
+			return $res;
+		}
+
+		$res = (object) [
+			'name' => $remote['name'],
+			'slug' => $this->plugin_slug,
+			'version' => $remote['version'],
+			'author' => '<a href="https://tusitio.com">Tu Nombre</a>',
+			'download_link' => $remote['download_url'],
+			'requires' => $remote['requires'],
+			'tested' => $remote['tested'],
+		];
+
+		return $res;
+	}
+
+	public function check_for_updates($transient) {
+		if (empty($transient->checked)) {
+			return $transient;
+		}
+
+		$remote = $this->get_remote_info();
+		if (!$remote || version_compare($remote['version'], $transient->checked[$this->plugin_slug . '/' . $this->plugin_slug . '.php'], '<=')) {
+			return $transient;
+		}
+
+		$transient->response[$this->plugin_slug . '/' . $this->plugin_slug . '.php'] = (object) [
+			'slug' => $this->plugin_slug,
+			'new_version' => $remote['version'],
+			'package' => $remote['download_url'],
+		];
+
+		return $transient;
+	}
+
+	public function clear_cache($upgrader, $options) {
+		if ($options['action'] === 'update' && $options['type'] === 'plugin') {
+			delete_transient($this->plugin_slug . '_update_info');
+		}
+	}
+
+	private function get_remote_info() {
+		$remote = get_transient($this->plugin_slug . '_update_info');
+		if ($remote === false) {
+			$response = wp_remote_get($this->update_url, ['timeout' => 10]);
+			if (is_wp_error($response) || wp_remote_retrieve_response_code($response) !== 200) {
+				return false;
+			}
+
+			$remote = json_decode(wp_remote_retrieve_body($response), true);
+			set_transient($this->plugin_slug . '_update_info', $remote, 12 * HOUR_IN_SECONDS);
+		}
+
+		return $remote;
+	}
+}
+
+new FuncionalidadTamaulipasUpdater();
+
 
 
 // Row
