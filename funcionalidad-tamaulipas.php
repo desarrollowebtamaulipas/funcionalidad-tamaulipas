@@ -4,7 +4,7 @@ Plugin Name: Gobierno de Tamaulipas | Funcionalidad Tamaulipas
 Plugin URI: http://www.tamaulipas.gob.mx
 Description: Catalogo de shortcodes de Bootstrap 5 y funcionalidades para themes del Gobierno de Tamaulipas
 Author: Departamento de Diseño de Interfaces Gráficas
-Version: 1.3.3.2
+Version: 1.3.3.3
 */
 
 
@@ -32,7 +32,7 @@ class FuncionalidadTamaulipasUpdater {
 			'name' => $remote['name'],
 			'slug' => $this->plugin_slug,
 			'version' => $remote['version'],
-			'author' => '<a href="https://tusitio.com">Tu Nombre</a>',
+			'author' => 'Departamento de Diseño de Interfaces Gráficas',
 			'download_link' => $remote['download_url'],
 			'requires' => $remote['requires'],
 			'tested' => $remote['tested'],
