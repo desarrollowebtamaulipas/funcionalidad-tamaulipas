@@ -26,11 +26,14 @@ jobs:
         rm -rf funcionalidad-tamaulipas
         # Crear una nueva carpeta para el plugin
         mkdir funcionalidad-tamaulipas
-        cp -r * funcionalidad-tamaulipas/
+        # Copiar todos los archivos y directorios EXCEPTO la carpeta funcionalidad-tamaulipas
+        shopt -s dotglob  # Para incluir archivos ocultos (archivos que comienzan con '.')
+        cp -r !(funcionalidad-tamaulipas) funcionalidad-tamaulipas/
         # Crear el archivo ZIP
         zip -r funcionalidad-tamaulipas.zip funcionalidad-tamaulipas
         # Eliminar la carpeta temporal
         rm -rf funcionalidad-tamaulipas
+    
 
     # 4. Subir el archivo ZIP como un asset a la release
     - name: Upload Release Asset
