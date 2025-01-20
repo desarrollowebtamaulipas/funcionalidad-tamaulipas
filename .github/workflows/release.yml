@@ -1,0 +1,42 @@
+name: Build and Release Plugin
+
+on:
+  release:
+    types: [published]  # Se ejecutará cuando se publique una nueva release en GitHub
+
+jobs:
+  build:
+    runs-on: ubuntu-latest  # Utiliza Ubuntu como sistema operativo para el job
+
+    steps:
+    # 1. Clonamos el código del repositorio
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # 2. Configurar la versión de PHP (en caso de que necesites PHP para alguna validación)
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '7.4'
+
+    # 3. Crear el archivo ZIP con la estructura correcta del plugin
+    - name: Create plugin ZIP
+      run: |
+        # Limpiar cualquier carpeta previa
+        rm -rf funcionalidad-tamaulipas
+        # Crear una nueva carpeta para el plugin
+        mkdir funcionalidad-tamaulipas
+        cp -r * funcionalidad-tamaulipas/
+        # Crear el archivo ZIP
+        zip -r funcionalidad-tamaulipas.zip funcionalidad-tamaulipas
+        # Eliminar la carpeta temporal
+        rm -rf funcionalidad-tamaulipas
+
+    # 4. Subir el archivo ZIP como un asset a la release
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./funcionalidad-tamaulipas.zip
+        asset_name: funcionalidad-tamaulipas.zip
+        asset_content_type: application/zip
