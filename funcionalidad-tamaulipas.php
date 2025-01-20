@@ -9,25 +9,17 @@ Version: 1.3.3.9
 
 
 // Manejo de la renombración de la carpeta después de la actualización
-add_filter('upgrader_source_selection', function ($source, $remote_source, $upgrader) {
-	// Define el slug correcto del plugin
+add_filter('upgrader_post_install', function ($response, $hook_extra, $result) {
 	$plugin_slug = 'funcionalidad-tamaulipas';
-	
-	// Si la carpeta tiene el sufijo "-main", renómbrala después de descomprimir
-	if (strpos(basename($source), '-main') !== false) {
-		// Espera a que la actualización haya sido descomprimida
-		$new_source = trailingslashit($source) . $plugin_slug;
+	$source_directory = trailingslashit($result['destination']) . $plugin_slug . '-main';
+	$correct_directory = trailingslashit($result['destination']) . $plugin_slug;
 
-		// Verifica si la carpeta "funcionalidad-tamaulipas" ya existe, y si no, la renombramos
-		if (!is_dir($new_source)) {
-			rename($source, $new_source);
-		}
-		
-		// Devolvemos la ruta nueva del plugin
-		return $new_source;
+	// Si la carpeta descomprimida tiene el sufijo "-main", moverla a la carpeta correcta
+	if (is_dir($source_directory)) {
+		rename($source_directory, $correct_directory);
 	}
 
-	return $source;
+	return $response;
 }, 10, 3);
 
 // Actualizacón a través de Github
