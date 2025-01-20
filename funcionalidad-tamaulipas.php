@@ -9,7 +9,7 @@ Version: 1.3.3.6
 
 
 class FuncionalidadTamaulipasUpdater {
-	private $plugin_slug = 'funcionalidad-tamaulipas';
+	private $plugin_slug = 'funcionalidad-tamaulipas-main';
 	private $update_url = 'https://raw.githubusercontent.com/desarrollowebtamaulipas/funcionalidad-tamaulipas/refs/heads/main/update.json';
 
 	public function __construct() {
