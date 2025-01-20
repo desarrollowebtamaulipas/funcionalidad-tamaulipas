@@ -12,12 +12,18 @@ Version: 1.3.3.9
 add_filter('upgrader_source_selection', function ($source, $remote_source, $upgrader) {
 	// Define el slug correcto del plugin
 	$plugin_slug = 'funcionalidad-tamaulipas';
-	$correct_folder = trailingslashit(WP_PLUGIN_DIR) . $plugin_slug;
-
-	// Si la carpeta tiene el sufijo "-main", renómbrala
+	
+	// Si la carpeta tiene el sufijo "-main", renómbrala después de descomprimir
 	if (strpos(basename($source), '-main') !== false) {
-		$new_source = trailingslashit($remote_source) . $plugin_slug;
-		rename($source, $new_source);
+		// Espera a que la actualización haya sido descomprimida
+		$new_source = trailingslashit($source) . $plugin_slug;
+
+		// Verifica si la carpeta "funcionalidad-tamaulipas" ya existe, y si no, la renombramos
+		if (!is_dir($new_source)) {
+			rename($source, $new_source);
+		}
+		
+		// Devolvemos la ruta nueva del plugin
 		return $new_source;
 	}
 
