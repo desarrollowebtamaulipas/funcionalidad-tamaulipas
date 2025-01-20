@@ -22,17 +22,11 @@ jobs:
     # 3. Crear el archivo ZIP con la estructura correcta del plugin
     - name: Create plugin ZIP
       run: |
-        # Limpiar cualquier carpeta previa
         rm -rf funcionalidad-tamaulipas
-        # Crear una nueva carpeta para el plugin
         mkdir funcionalidad-tamaulipas
-        # Copiar todos los archivos y directorios EXCEPTO la carpeta funcionalidad-tamaulipas
         shopt -s dotglob
-        # Para incluir archivos ocultos (archivos que comienzan con '.')
         cp -r !(funcionalidad-tamaulipas) funcionalidad-tamaulipas/
-        # Crear el archivo ZIP
         zip -r funcionalidad-tamaulipas.zip funcionalidad-tamaulipas
-        # Eliminar la carpeta temporal
         rm -rf funcionalidad-tamaulipas
     
 
