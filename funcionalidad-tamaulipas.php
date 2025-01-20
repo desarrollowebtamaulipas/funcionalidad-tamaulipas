@@ -8,6 +8,23 @@ Version: 1.3.3.9
 */
 
 
+// Manejo de la renombración de la carpeta después de la actualización
+add_filter('upgrader_source_selection', function ($source, $remote_source, $upgrader) {
+	// Define el slug correcto del plugin
+	$plugin_slug = 'funcionalidad-tamaulipas';
+	$correct_folder = trailingslashit(WP_PLUGIN_DIR) . $plugin_slug;
+
+	// Si la carpeta tiene el sufijo "-main", renómbrala
+	if (strpos(basename($source), '-main') !== false) {
+		$new_source = trailingslashit($remote_source) . $plugin_slug;
+		rename($source, $new_source);
+		return $new_source;
+	}
+
+	return $source;
+}, 10, 3);
+
+// Actualizacón a través de Github
 class FuncionalidadTamaulipasUpdater {
 	private $plugin_slug = 'funcionalidad-tamaulipas';
 	private $update_url = 'https://raw.githubusercontent.com/desarrollowebtamaulipas/funcionalidad-tamaulipas/refs/heads/main/update.json';
