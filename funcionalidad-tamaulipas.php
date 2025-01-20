@@ -4,27 +4,13 @@ Plugin Name: Gobierno de Tamaulipas | Funcionalidad Tamaulipas
 Plugin URI: http://www.tamaulipas.gob.mx
 Description: Catalogo de shortcodes de Bootstrap 5 y funcionalidades para themes del Gobierno de Tamaulipas
 Author: Departamento de Diseño de Interfaces Gráficas
-Version: 1.3.3.13
+Version: 1.3.3.15
 */
 
 
-// Manejo de la renombración de la carpeta después de la actualización
-add_filter('upgrader_post_install', function ($response, $hook_extra, $result) {
-	$plugin_slug = 'funcionalidad-tamaulipas';
-	$source_directory = trailingslashit($result['destination']) . $plugin_slug . '-main';
-	$correct_directory = trailingslashit($result['destination']) . $plugin_slug;
-
-	// Si la carpeta descomprimida tiene el sufijo "-main", moverla a la carpeta correcta
-	if (is_dir($source_directory)) {
-		rename($source_directory, $correct_directory);
-	}
-
-	return $response;
-}, 10, 3);
-
 // Actualizacón a través de Github
 class FuncionalidadTamaulipasUpdater {
-	private $plugin_slug = 'funcionalidad-tamaulipas';
+	private $plugin_slug = 'funcionalidad-tamaulipas-main';
 	private $update_url = 'https://raw.githubusercontent.com/desarrollowebtamaulipas/funcionalidad-tamaulipas/refs/heads/main/update.json';
 
 	public function __construct() {
