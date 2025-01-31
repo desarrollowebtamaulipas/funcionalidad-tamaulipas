@@ -150,42 +150,37 @@ function bootstrap_button_shortcode($atts, $content = null) {
 	// Atributos del Shortcode
 	$atts = shortcode_atts(
 		array(
-			'type' => 'primary',
-			'link' => '#',
-			'target' => false,
-			'size' => 'md',
-			'xclass' => false,
-			'data' => false
+			'type' => 'primary',  // Color del botón
+			'link' => '#',        // Enlace del botón
+			'target' => '',       // Atributo target (_blank, _self, etc.)
+			'size' => '',         // Tamaño (lg, sm, etc.)
+			'xclass' => '',       // Clases adicionales
+			'data' => ''          // Atributos data personalizados
 		),
 		$atts,
 		'button'
 	);
 
-	// Revisa si tiene tamaño y añade el prefijo "btn-" si es necesario
-	$size_class = '';
-	if ($atts['size'] != '') {
-		$size_class = 'btn-' . esc_attr($atts['size']);
-	}
+	// Asegurar que el tipo siempre tenga un valor
+	$type_class = !empty($atts['type']) ? 'btn-' . esc_attr($atts['type']) : 'btn-primary';
 
-	// Añadir el atributo data solo si no está vacío
-	$data_attr = '';
-	if (!empty($atts['data'])) {
-		$data_attr = ' data-' . esc_attr($atts['data']);
-	}
-	
-	// Añadir el atributo target solo si no está vacío
-	$target_attr = '';
-	if (!empty($atts['target'])) {
-		$target_attr = ' target="' . esc_attr($atts['target']) . '"';
-	}
+	// Definir la clase de tamaño si se especifica
+	$size_class = !empty($atts['size']) ? 'btn-' . esc_attr($atts['size']) : '';
+
+	// Generar el atributo data si se especifica
+	$data_attr = !empty($atts['data']) ? ' data-' . esc_attr($atts['data']) : '';
+
+	// Generar el atributo target si se especifica
+	$target_attr = !empty($atts['target']) ? ' target="' . esc_attr($atts['target']) . '"' : '';
 
 	// Generamos el HTML del botón con el contenido
-	$output = '<a href="' . esc_url($atts['link']) . '" class="btn btn-' . esc_attr($atts['type']) . ' ' . $size_class . ' ' . esc_attr($atts['xclass']) . '"' . $data_attr . $target_attr . '>' . do_shortcode($content) . '</a>';
+	$output = '<a href="' . esc_url($atts['link']) . '" class="btn ' . $type_class . ' ' . $size_class . ' ' . esc_attr($atts['xclass']) . '"' . $data_attr . $target_attr . '>' . do_shortcode($content) . '</a>';
 	
 	return $output;
 }
 
 add_shortcode('button', 'bootstrap_button_shortcode');
+
 
 
 
