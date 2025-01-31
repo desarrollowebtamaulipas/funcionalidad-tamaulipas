@@ -8,7 +8,7 @@ Version: 1.3.3.16
 */
 
 
-// Actualizacón a través de Github
+// Actualización a través de Github
 class FuncionalidadTamaulipasUpdater {
 	private $plugin_slug = 'funcionalidad-tamaulipas-main';
 	private $update_url = 'https://raw.githubusercontent.com/desarrollowebtamaulipas/funcionalidad-tamaulipas/refs/heads/main/update.json';
@@ -99,10 +99,9 @@ function bootstrap_row_shortcode($atts, $content = null) {
 	);
 
 	// Estructura HTML del Row
-	$output = '<div class="row ' . esc_attr($atts['xclass']) . '">' . do_shortcode($content) . '</div>';
+	$output = '<div class="row ' . esc_attr($atts['xclass']) . '">' . do_shortcode(shortcode_unautop($content)) . '</div>';
 	
 	$output = apply_filters('the_content', $output);
-
 	return $output;
 }
 add_shortcode('row', 'bootstrap_row_shortcode');
@@ -123,30 +122,26 @@ function bootstrap_col_shortcode($atts, $content = null) {
 	);
 
 	// String de Atributos
-	$size_class = '';
-	$offset_class = '';
-	$order_class = '';
-
-	// Agrega solo si contiene
-	if (!empty($atts['size'])) {
-		$size_class = 'col-' . esc_attr($atts['size']);
-	}
-	if (!empty($atts['offset'])) {
-		$offset_class = 'offset-' . esc_attr($atts['offset']);
-	}
-	if (!empty($atts['order'])) {
-		$order_class = 'order-' . esc_attr($atts['order']);
-	}
+	$size_class = !empty($atts['size']) ? 'col-' . esc_attr($atts['size']) : '';
+	$offset_class = !empty($atts['offset']) ? 'offset-' . esc_attr($atts['offset']) : '';
+	$order_class = !empty($atts['order']) ? 'order-' . esc_attr($atts['order']) : '';
 
 	// Junta todas las clases
-	$classes = $size_class . ' ' . $offset_class . ' ' . $order_class . ' ' . esc_attr($atts['xclass']);
+	$classes = trim("$size_class $offset_class $order_class " . esc_attr($atts['xclass']));
+
+	// Aplicamos shortcode_unautop solo si está anidado dentro de row
+	if (has_filter('the_content', 'wpautop')) {
+		$content = shortcode_unautop($content);
+	}
 
 	// Estructura HTML de la Columna
-	$output = '<div class="' . trim($classes) . '">' . do_shortcode($content) . '</div>';
-
+	$output = '<div class="' . esc_attr($classes) . '">' . do_shortcode($content) . '</div>';
+	
+	$output = apply_filters('the_content', $output);
 	return $output;
 }
 add_shortcode('col', 'bootstrap_col_shortcode');
+
 
 
 
