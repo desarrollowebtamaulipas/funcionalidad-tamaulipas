@@ -107,6 +107,7 @@ function bootstrap_row_shortcode($atts, $content = null) {
 add_shortcode('row', 'bootstrap_row_shortcode');
 
 
+
 // Columnas
 function bootstrap_col_shortcode($atts, $content = null) {
 	// Atributos del Shortcode
@@ -141,7 +142,6 @@ function bootstrap_col_shortcode($atts, $content = null) {
 	return $output;
 }
 add_shortcode('col', 'bootstrap_col_shortcode');
-
 
 
 
@@ -180,7 +180,6 @@ function bootstrap_button_shortcode($atts, $content = null) {
 }
 
 add_shortcode('button', 'bootstrap_button_shortcode');
-
 
 
 
@@ -330,6 +329,7 @@ function table_bootstrap_shortcode($atts, $content = null) {
 add_shortcode('table', 'table_bootstrap_shortcode');
 
 
+
 // Visor de PDF
 function pdfjs_custom_viewer_shortcode($atts) {
 	// Extraer los atributos con valores por defecto
@@ -362,6 +362,7 @@ function pdfjs_custom_viewer_shortcode($atts) {
 
 }
 add_shortcode('pdf', 'pdfjs_custom_viewer_shortcode');
+
 
 
 // Alertas
