@@ -4,7 +4,7 @@ Plugin Name: Gobierno de Tamaulipas | Funcionalidad Tamaulipas
 Plugin URI: http://www.tamaulipas.gob.mx
 Description: Catalogo de shortcodes de Bootstrap 5 y funcionalidades para themes del Gobierno de Tamaulipas
 Author: Departamento de Diseño de Interfaces Gráficas
-Version: 1.3.3.17
+Version: 1.4
 */
 
 
@@ -396,3 +396,154 @@ function bootstrap_alert_shortcode($atts, $content = null) {
 }
 
 add_shortcode('alert', 'bootstrap_alert_shortcode');
+
+
+
+// Datatable
+function datatable_shortcode($atts, $content = null) {
+	static $datatable_counter = 0;
+	$datatable_counter++;
+
+	$atts = shortcode_atts([
+		'csv'  => '',
+		'id'   => 'datatable-' . $datatable_counter,
+		'class'=> 'table table-striped table-bordered align-middle'
+	], $atts, 'datatable');
+
+	// Si viene CSV → tabla vacía
+	if (!empty($atts['csv'])) {
+		return '<table id="'.esc_attr($atts['id']).'" 
+					 class="'.esc_attr($atts['class']).'" 
+					 data-csv="'.esc_url($atts['csv']).'"></table>';
+	}
+
+	// Si NO hay CSV → usa tabla HTML envuelta
+	$content = do_shortcode($content);
+	$content = preg_replace(
+		'/<table(.*?)>/i',
+		'<table$1 id="'.esc_attr($atts['id']).'" class="'.esc_attr($atts['class']).'">',
+		$content
+	);
+
+	return $content;
+}
+add_shortcode('datatable', 'datatable_shortcode');
+
+
+function datatable_enqueue_scripts() {
+	if (!is_singular()) return;
+
+	global $post;
+	if (!has_shortcode($post->post_content, 'datatable')) return;
+
+	wp_enqueue_style( 'datatables-bs5', 'https://cdn.datatables.net/v/bs5/dt-2.3.5/r-3.0.7/datatables.min.css', [], null );
+	wp_enqueue_script( 'datatables-bs5', 'https://cdn.datatables.net/v/bs5/dt-2.3.5/r-3.0.7/datatables.min.js', ['jquery'], null, true );
+
+	// Script personalizado
+	$js = <<<JS
+		jQuery(window).on('load', function() {
+		
+			// === PARSER CSV (soporta comillas y comas internas) ===
+			function parseCSV(text) {
+				const rows = [];
+				let row = [];
+				let cell = '';
+				let insideQuotes = false;
+		
+				for (let i = 0; i < text.length; i++) {
+					const char = text[i];
+					const next = text[i+1];
+		
+					if (char === '"' && insideQuotes && next === '"') {
+						cell += '"'; i++;
+					} else if (char === '"') {
+						insideQuotes = !insideQuotes;
+					} else if (char === ',' && !insideQuotes) {
+						row.push(cell); cell = '';
+					} else if ((char === '\\n' || char === '\\r') && !insideQuotes) {
+						if (cell !== '' || row.length > 0) {
+							row.push(cell); rows.push(row);
+						}
+						row = []; cell = '';
+					} else {
+						cell += char;
+					}
+				}
+				if (cell !== '' || row.length > 0) {
+					row.push(cell); rows.push(row);
+				}
+				return rows;
+			}
+		
+			// === TABLAS DESDE CSV ===
+			jQuery('table[data-csv]').each(function() {
+				let table = jQuery(this);
+				let url   = table.data('csv');
+		
+				fetch(url).then(res => res.text()).then(csv => {
+					let rows = parseCSV(csv);
+		
+					// Construir thead
+					let thead = '<thead><tr>';
+					rows[0].forEach(col => thead += '<th>' + col + '</th>');
+					thead += '</tr></thead>';
+		
+					// Construir tbody
+					let tbody = '<tbody>';
+					for (let i = 1; i < rows.length; i++) {
+						tbody += '<tr>';
+						rows[i].forEach(col => tbody += '<td>' + col + '</td>');
+						tbody += '</tr>';
+					}
+					tbody += '</tbody>';
+		
+					table.html(thead + tbody);
+		
+					// Activar DataTable
+					new DataTable(table[0], {
+						responsive: true,
+						paging: true,
+						searching: true,
+						ordering: true,
+						info: true,
+						pagingType: 'simple_numbers',
+						layout: {
+							topStart: 'pageLength',
+							topEnd: 'search',
+							bottomStart: 'info',
+							bottomEnd: 'paging'
+						},
+						language: {
+							url: 'https://cdn.datatables.net/plug-ins/2.0.3/i18n/es-ES.json'
+						}
+					});
+				});
+			});
+		
+			// === TABLAS HTML NORMALES ===
+			jQuery('table[id^="datatable-"]').not('[data-csv]').each(function() {
+				new DataTable(this, {
+					responsive: true,
+					paging: true,
+					searching: true,
+					ordering: true,
+					info: true,
+					pagingType: 'simple_numbers',
+					layout: {
+						topStart: 'pageLength',
+						topEnd: 'search',
+						bottomStart: 'info',
+						bottomEnd: 'paging'
+					},
+					language: {
+						url: 'https://cdn.datatables.net/plug-ins/2.0.3/i18n/es-ES.json'
+					}
+				});
+			});
+		
+		});
+		JS;
+
+	wp_add_inline_script('datatables-bs5', $js);
+}
+add_action('wp_enqueue_scripts', 'datatable_enqueue_scripts');
