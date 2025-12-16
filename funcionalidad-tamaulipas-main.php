@@ -4,7 +4,7 @@ Plugin Name: Gobierno de Tamaulipas | Funcionalidad Tamaulipas
 Plugin URI: http://www.tamaulipas.gob.mx
 Description: Catalogo de shortcodes de Bootstrap 5 y funcionalidades para themes del Gobierno de Tamaulipas
 Author: Departamento de Diseño de Interfaces Gráficas
-Version: 1.4
+Version: 1.5
 */
 
 
@@ -327,6 +327,103 @@ function table_bootstrap_shortcode($atts, $content = null) {
 	return $tabla_con_bootstrap;
 }
 add_shortcode('table', 'table_bootstrap_shortcode');
+
+
+
+// Tabs
+function bootstrap_tabs_shortcode($atts, $content = null) {
+	static $tabs_instance = 0;
+	$tabs_instance++;
+
+	// Atributos del contenedor
+	$atts = shortcode_atts(array(
+		'pill'  => 'false',
+		'xclass' => '',
+	), $atts);
+
+	$is_pill = filter_var($atts['pill'], FILTER_VALIDATE_BOOLEAN);
+
+	$nav_class = $is_pill ? 'nav-pills' : 'nav-tabs';
+	$nav_class .= ' ' . esc_attr($atts['xclass']);
+
+	// Limpieza wpautop
+	$content = shortcode_unautop($content);
+	$content = trim($content);
+
+	// Extraer tabs
+	preg_match_all('/\[tab([^\]]*)\](.*?)\[\/tab\]/s', $content, $matches);
+
+	if (empty($matches[0])) return '';
+
+	$tabs_nav = '';
+	$tabs_content = '';
+	$has_active = false;
+
+	foreach ($matches[1] as $i => $tab_atts) {
+		$tab_atts = shortcode_parse_atts($tab_atts);
+
+		$title = $tab_atts['title'] ?? 'Tab ' . ($i + 1);
+		$is_active = isset($tab_atts['active']) && $tab_atts['active'] === 'true';
+
+		if ($is_active) {
+			$has_active = true;
+		}
+
+		$tab_id = 'bs-tab-' . $tabs_instance . '-' . $i;
+		$active = $is_active ? 'active' : '';
+		$show   = $is_active ? 'show active' : '';
+
+		// Nav
+		$tabs_nav .= '
+		<li class="nav-item" role="presentation">
+			<button class="nav-link ' . $active . '" 
+				id="' . $tab_id . '-tab"
+				data-bs-toggle="tab"
+				data-bs-target="#' . $tab_id . '"
+				type="button"
+				role="tab">
+				' . esc_html($title) . '
+			</button>
+		</li>';
+
+		// Content
+		$tabs_content .= '
+		<div class="tab-pane fade ' . $show . '" 
+			id="' . $tab_id . '" 
+			role="tabpanel">
+			' . do_shortcode($matches[2][$i]) . '
+		</div>';
+	}
+
+	// Si ningún tab tiene active="true", activa el primero
+	if (!$has_active) {
+		$tabs_nav = preg_replace('/nav-link/', 'nav-link active', $tabs_nav, 1);
+		$tabs_content = preg_replace(
+			'/tab-pane fade/',
+			'tab-pane fade show active',
+			$tabs_content,
+			1
+		);
+	}
+
+	return '
+	<div class="tabs">
+		<ul class="nav ' . $nav_class . '" role="tablist">
+			' . $tabs_nav . '
+		</ul>
+		<div class="tab-content pt-2 pb-5 px-3">
+			' . $tabs_content . '
+		</div>
+	</div>';
+}
+add_shortcode('tabs', 'bootstrap_tabs_shortcode');
+
+// Tab individual (no renderiza nada)
+function bootstrap_tab_shortcode() {
+	return '';
+}
+add_shortcode('tab', 'bootstrap_tab_shortcode');
+
 
 
 
